@@ -56,12 +56,11 @@ def healthz():
 
 @app.post("/api/links", status_code=201)
 def create_link(data: LinkIn, request: Request):
-    """รับ URL ยาว แล้วคืนรหัสและลิงก์สั้น"""
-    # TODO (lab บทที่ 1): ตรวจว่า data.url ขึ้นต้นด้วย http:// หรือ https://
-    #   ถ้าไม่ใช่ ให้ตอบกลับ status 422 พร้อมข้อความ "URL ต้องขึ้นต้นด้วย http:// หรือ https://"
-    #   (คำใบ้: ดูวิธีตอบ 404 ในฟังก์ชัน link_info และเมธอด str.startswith)
-    #   ทำงานนี้บน branch ใหม่ แล้ว commit ด้วยข้อความ "feat: ตรวจรูปแบบ URL ก่อนย่อ"
-
+    if not data.url.startswith(("http://", "https://")):
+    raise HTTPException(
+        status_code=422,
+        detail="URL ต้องขึ้นต้นด้วย http:// หรือ https://"
+    )
     code = new_code()
     created_at = datetime.now(timezone.utc).isoformat()
     with get_db() as conn:
