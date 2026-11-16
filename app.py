@@ -28,10 +28,10 @@ def get_db() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row  # ให้อ่านคอลัมน์ด้วยชื่อได้ เช่น row["url"]
     conn.execute(
         """CREATE TABLE IF NOT EXISTS links (
-               code TEXT PRIMARY KEY,
-               url TEXT NOT NULL,
-               clicks INTEGER NOT NULL DEFAULT 0,
-               created_at TEXT NOT NULL
+                code TEXT PRIMARY KEY,
+                url TEXT NOT NULL,
+                clicks INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL
            )"""
     )
     return conn
@@ -57,10 +57,10 @@ def healthz():
 @app.post("/api/links", status_code=201)
 def create_link(data: LinkIn, request: Request):
     if not data.url.startswith(("http://", "https://")):
-    raise HTTPException(
-        status_code=422,
-        detail="URL ต้องขึ้นต้นด้วย http:// หรือ https://"
-    )
+        raise HTTPException(
+            status_code=422,
+            detail="URL ต้องขึ้นต้นด้วย http:// หรือ https://"
+        )
     code = new_code()
     created_at = datetime.now(timezone.utc).isoformat()
     with get_db() as conn:
